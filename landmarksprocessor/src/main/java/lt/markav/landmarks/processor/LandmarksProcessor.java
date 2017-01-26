@@ -1,5 +1,6 @@
 package lt.markav.landmarks.processor;
 
+import java.util.List;
 import java.util.Set;
 
 import javax.annotation.processing.AbstractProcessor;
@@ -11,7 +12,7 @@ import javax.lang.model.element.TypeElement;
 
 @SupportedAnnotationTypes("lt.markav.landmarks.annotation.GenerateLandmarks")
 @SupportedSourceVersion(SourceVersion.RELEASE_7)
-public class LandmarksProcessor extends AbstractProcessor {
+public class LandmarksProcessor extends AbstractProcessor implements Logging{
 
     @Override
     public boolean process(Set<? extends TypeElement> annotations, RoundEnvironment roundEnv) {
@@ -20,30 +21,25 @@ public class LandmarksProcessor extends AbstractProcessor {
         try {
             processWithErrors(annotations, roundEnv);
         } catch (Exception e) {
-            print(e.getMessage());
+            log(e.getMessage());
         }
         header();
         return true;
     }
 
     private void processWithErrors(Set<? extends TypeElement> annotations, RoundEnvironment roundEnv) throws Exception {
-        LayoutsProcessor locator = new LayoutsProcessor(processingEnv);
-        locator.collectDataForLandmarksGeneration();
+        LayoutsParser parser = new LayoutsParser(processingEnv);
+        List<Layout> layouts = parser.parseAllLayouts();
 
-//        print(roundEnv);
-//        print(roundEnv.getElementsAnnotatedWith(GenerateLandmarks.class));
-//
-//        print(layouts);
+
+
+
+
+        layouts.forEach(this::log);
     }
 
     private void header() {
-        print("\t\t\t##############################################33");
-        print("\t\t\t##############################################33");
-        print("\t\t\t##############################################33");
-        print("\t\t\t##############################################33");
+        System.out.println("#####################################################################");
     }
 
-    private void print(Object o) {
-        System.out.println(o.toString());
-    }
 }

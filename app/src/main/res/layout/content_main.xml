@@ -23,4 +23,12 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content" />
 
+    <fragment
+        android:name="lt.markav.landmarks.ColorFragment"
+        android:layout_width="50dp"
+        android:layout_height="50dp"
+        android:tag="@string/app_name" />
+
+    <include layout="@android:layout/simple_list_item_1" />
+
 </RelativeLayout>
