@@ -12,8 +12,6 @@ public class View {
     private String layout = "";
     private String tag = "";
 
-    private String[] fields = {type, id, layout, tag};
-
     public View(Element element) {
         type = element.getTagName();
         id = element.getAttribute("android:id");
@@ -53,11 +51,6 @@ public class View {
         this.tag = tag;
     }
 
-    @Override
-    public String toString() {
-        return type + "{ " + id + layout + tag + " }";
-    }
-
     public boolean isUseful() {
         return !(id + layout + tag).isEmpty() && !layout.startsWith("@android:layout/");
     }
@@ -75,5 +68,25 @@ public class View {
             tag = tag.replace("@string/", "R.string.");
         }
         return this;
+    }
+
+    public String getName() {
+        return id.replace("android.R.id.", "").replace("R.id.", "");
+    }
+
+    @Override
+    public String toString() {
+        return type + "{ " + id + layout + tag + " }";
+    }
+
+    @Override
+    public int hashCode() {
+        return toString().hashCode();
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        String other = "" + obj;
+        return toString().equals(other);
     }
 }

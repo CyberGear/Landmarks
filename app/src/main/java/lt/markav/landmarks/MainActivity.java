@@ -9,10 +9,12 @@ import android.view.View;
 import android.view.Menu;
 import android.view.MenuItem;
 
-import lt.markav.landmarks.annotation.GenerateLandmarks;
+import lt.markav.landmarks.annotation.WithLandmarks;
 
-@GenerateLandmarks
+@WithLandmarks(R.class)
 public class MainActivity extends AppCompatActivity {
+
+    private ActivityMainLandmarks landmarks;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {

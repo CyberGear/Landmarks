@@ -7,7 +7,7 @@ import java.util.function.BinaryOperator;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
-public class Layout {
+public class Layout implements Logging{
 
     private final String name;
     private List<File> xmls = new ArrayList<>();
@@ -52,7 +52,6 @@ public class Layout {
 
     public void prepare() {
         this.views = views.stream().distinct().map(View::prepare).collect(Collectors.toList());
-
     }
 
 }

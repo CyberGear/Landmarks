@@ -37,7 +37,7 @@ class LayoutsParser implements Logging {
     private File getRootDir(ProcessingEnvironment processingEnv) throws IOException {
         JavaFileObject sourceFile = processingEnv.getFiler().createSourceFile("dummy");
         File file = new File(sourceFile.toUri());
-        sourceFile.delete();
+        sourceFile.openWriter().close();
 
         while (file.getParent() != null) {
             file = file.getParentFile();
