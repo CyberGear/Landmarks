@@ -1,17 +1,18 @@
-package lt.markav.landmarks.processor;
+package lt.markav.landmarks.processor.parser;
 
 import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.function.BinaryOperator;
 import java.util.stream.Collectors;
-import java.util.stream.Stream;
 
-public class Layout implements Logging{
+import lt.markav.landmarks.processor.Logging;
+import lt.markav.landmarks.processor.parser.tag.Tag;
+
+public class Layout implements Logging {
 
     private final String name;
     private List<File> xmls = new ArrayList<>();
-    private List<View> views = new ArrayList<>();
+    private List<Tag> tags = new ArrayList<>();
 
     public Layout(String name) {
         this.name = name;
@@ -31,27 +32,27 @@ public class Layout implements Logging{
 
     @Override
     public String toString() {
-        String string = views.stream()
-                .map(view -> "\n\t\t" + view.toString())
+        String string = tags.stream()
+                .map(tag -> "\n\t\t" + tag.toString())
                 .reduce((str1, str2) -> str1 + str2)
                 .orElseGet(() -> "");
         return name + "{" + string + " }";
     }
 
-    public List<View> getViews() {
-        return views;
+    public List<Tag> getTags() {
+        return tags;
     }
 
-    public void setViews(List<View> views) {
-        this.views = views;
+    public void setViews(List<Tag> tags) {
+        this.tags = tags;
     }
 
-    public void addViews(List<View> views) {
-        this.views.addAll(views.stream().filter(View::isUseful).collect(Collectors.toList()));
+    public void addViews(List<Tag> tags) {
+        this.tags.addAll(tags.stream().filter(Tag::isValid).collect(Collectors.toList()));
     }
 
     public void prepare() {
-        this.views = views.stream().distinct().map(View::prepare).collect(Collectors.toList());
+//        this.tags = tags.stream().distinct().map(Tag::prepare).collect(Collectors.toList());
     }
 
 }

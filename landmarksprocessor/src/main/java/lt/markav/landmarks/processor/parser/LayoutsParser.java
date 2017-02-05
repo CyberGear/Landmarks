@@ -1,4 +1,4 @@
-package lt.markav.landmarks.processor;
+package lt.markav.landmarks.processor.parser;
 
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
@@ -20,12 +20,15 @@ import javax.tools.JavaFileObject;
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 
-class LayoutsParser implements Logging {
+import lt.markav.landmarks.processor.Logging;
+import lt.markav.landmarks.processor.parser.tag.Tag;
+
+public class LayoutsParser implements Logging {
 
     private final File root;
     private final DocumentBuilder documentBuilder;
 
-    LayoutsParser(ProcessingEnvironment processingEnv) {
+    public LayoutsParser(ProcessingEnvironment processingEnv) {
         try {
             root = getRootDir(processingEnv);
             documentBuilder = DocumentBuilderFactory.newInstance().newDocumentBuilder();
@@ -58,21 +61,21 @@ class LayoutsParser implements Logging {
     private void prepareLayouts(List<Layout> layouts) {
         layouts.stream().forEach(Layout::prepare);
         layouts.forEach(layout -> {
-            List<View> includes = layout.getViews().stream()
-                    .filter(view -> view.getType().equals("include"))
-                    .collect(Collectors.toList());
-            if (includes.isEmpty()) {
-                return;
-            }
-
-            List<View> inheritedViews = includes.stream().flatMap(include ->
-                    layouts.stream()
-                            .filter(layout1 -> layout1.getName().equals(include.getLayout()))
-                            .flatMap(l -> l.getViews().stream())
-            ).collect(Collectors.toList());
-
-            layout.getViews().removeAll(includes);
-            layout.getViews().addAll(inheritedViews);
+//            List<Vieww> includes = layout.getTags().stream()
+//                    .filter(view -> view.getType().equals("include"))
+//                    .collect(Collectors.toList());
+//            if (includes.isEmpty()) {
+//                return;
+//            }
+//
+//            List<Vieww> inheritedViews = includes.stream().flatMap(include ->
+//                    layouts.stream()
+//                            .filter(layout1 -> layout1.getName().equals(include.getLayout()))
+//                            .flatMap(l -> l.getViews().stream())
+//            ).collect(Collectors.toList());
+//
+//            layout.getViews().removeAll(includes);
+//            layout.getViews().addAll(inheritedViews);
         });
     }
 
@@ -121,14 +124,14 @@ class LayoutsParser implements Logging {
                         layout.addViews(parseLayout(xml))));
     }
 
-    private List<View> parseLayout(File xml) {
+    private List<Tag> parseLayout(File xml) {
         try {
             List<Element> elementsToSearch = new ArrayList<>();
             elementsToSearch.add(documentBuilder.parse(xml).getDocumentElement());
-            List<View> views = new ArrayList<>();
+            List<Tag> tags = new ArrayList<>();
             for (int i = 0; i < elementsToSearch.size(); i++) {
                 Element element = elementsToSearch.get(i);
-                views.add(new View(element));
+                tags.add(Tag.parse(element));
 
                 if (element.hasChildNodes()) {
                     NodeList childNodes = element.getChildNodes();
@@ -141,9 +144,8 @@ class LayoutsParser implements Logging {
                 }
             }
 
-            return views;
+            return tags;
         } catch (Exception e) {
-            e.printStackTrace();
             return Collections.EMPTY_LIST;
         }
     }

@@ -1,18 +1,15 @@
-package lt.markav.landmarks.processor;
+package lt.markav.landmarks.processor.parser;
 
 import org.w3c.dom.Element;
 
-import java.util.Arrays;
-import java.util.Objects;
-
-public class View {
+public class Vieww {
 
     private String type;
     private String id = "";
     private String layout = "";
     private String tag = "";
 
-    public View(Element element) {
+    public Vieww(Element element) {
         type = element.getTagName();
         id = element.getAttribute("android:id");
         layout = element.getAttribute("layout");
@@ -55,7 +52,7 @@ public class View {
         return !(id + layout + tag).isEmpty() && !layout.startsWith("@android:layout/");
     }
 
-    public View prepare() {
+    public Vieww prepare() {
         if (!id.isEmpty()) {
             id = id.replace("@+id/", "R.id.")
                     .replace("@id/", "R.id.")

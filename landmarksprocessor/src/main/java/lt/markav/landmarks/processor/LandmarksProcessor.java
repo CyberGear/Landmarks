@@ -1,7 +1,6 @@
 package lt.markav.landmarks.processor;
 
 import com.squareup.javapoet.JavaFile;
-import com.squareup.javapoet.TypeSpec;
 
 import java.io.IOException;
 import java.util.Collections;
@@ -21,9 +20,9 @@ import javax.lang.model.util.Elements;
 import javax.lang.model.util.Types;
 
 import lt.markav.landmarks.annotation.WithLandmarks;
+import lt.markav.landmarks.processor.parser.Layout;
+import lt.markav.landmarks.processor.parser.LayoutsParser;
 
-import static javax.tools.Diagnostic.Kind.ERROR;
-import static javax.tools.Diagnostic.Kind.NOTE;
 import static javax.tools.Diagnostic.Kind.WARNING;
 
 @SupportedAnnotationTypes("lt.markav.landmarks.annotation.WithLandmarks")
