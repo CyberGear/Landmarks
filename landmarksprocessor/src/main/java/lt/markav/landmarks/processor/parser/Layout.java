@@ -2,7 +2,9 @@ package lt.markav.landmarks.processor.parser;
 
 import java.io.File;
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 import java.util.stream.Collectors;
 
 import lt.markav.landmarks.processor.Logging;
@@ -12,7 +14,7 @@ public class Layout implements Logging {
 
     private final String name;
     private List<File> xmls = new ArrayList<>();
-    private List<Tag> tags = new ArrayList<>();
+    private Set<Tag> tags = new HashSet<>();
 
     public Layout(String name) {
         this.name = name;
@@ -39,20 +41,13 @@ public class Layout implements Logging {
         return name + "{" + string + " }";
     }
 
-    public List<Tag> getTags() {
+    public Set<Tag> getTags() {
         return tags;
     }
 
-    public void setViews(List<Tag> tags) {
-        this.tags = tags;
-    }
-
-    public void addViews(List<Tag> tags) {
-        this.tags.addAll(tags.stream().filter(Tag::isValid).collect(Collectors.toList()));
-    }
-
-    public void prepare() {
-//        this.tags = tags.stream().distinct().map(Tag::prepare).collect(Collectors.toList());
+    public void addTags(Set<Tag> tags) {
+        Set<Tag> set = tags.stream().filter(Tag::isValid).collect(Collectors.toSet());
+        this.tags.addAll(set);
     }
 
 }

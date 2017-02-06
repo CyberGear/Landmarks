@@ -19,7 +19,7 @@
         android:layout_height="wrap_content" />
 
     <TextView
-        android:id="@+id/idInLargeOnly"
+        android:id="@+id/inLargeOnly"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="Hello World!" />

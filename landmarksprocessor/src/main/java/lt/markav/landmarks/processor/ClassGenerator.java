@@ -43,6 +43,17 @@ public class ClassGenerator implements Logging {
 
     private JavaFile createClassFile() throws Exception {
 
+        TypeSpec.Builder classBuilder = TypeSpec
+                .classBuilder(className)
+                .addModifiers(Modifier.PUBLIC);
+
+        layout.getTags().forEach(tag -> tag.declareField(classBuilder));
+
+        TypeSpec landmarksClass = classBuilder.build();
+
+        return JavaFile.builder(appId, landmarksClass).build();
+    }
+
 //        MethodSpec.constructorBuilder()
 
 
@@ -56,42 +67,5 @@ public class ClassGenerator implements Logging {
 //                .addParameter(android)
 //                .addParameter(String.class, "robot", Modifier.FINAL)
 //                .build();
-
-        TypeSpec.Builder classBuilder = TypeSpec
-                .classBuilder(className)
-                .addModifiers(Modifier.PUBLIC);
-
-//        layout.getTags().stream().distinct().forEach(view -> {
-//            ClassName classOfView = getClassOfView(view.getType());
-//            if (classOfView != null) {
-//                classBuilder.addField(classOfView, view.getName(), Modifier.PUBLIC/*, Modifier.FINAL*/);
-//            }
-//        });
-
-        TypeSpec landmarksClass = classBuilder.build();
-
-        return JavaFile.builder(appId, landmarksClass).build();
-    }
-
-    private ClassName getClassOfView(String type) {
-        if (type.equals("fragment")) {
-            return null;
-        }
-        try {
-            return ClassName.get(Class.forName(type));
-        } catch (ClassNotFoundException ignore) { }
-        try {
-            return ClassName.get(Class.forName("android.view." + type));
-        } catch (ClassNotFoundException ignore) { }
-        try {
-            return ClassName.get(Class.forName("android.widget." + type));
-        } catch (ClassNotFoundException ignore) { }
-
-        if (type.contains("\\.")) {
-            String simpleName = Stream.of(type.split("\\.")).reduce((a, b) -> b).orElse("");
-            return ClassName.get(type.replace("." + simpleName, ""), simpleName);
-        }
-        return null;
-    }
 
 }

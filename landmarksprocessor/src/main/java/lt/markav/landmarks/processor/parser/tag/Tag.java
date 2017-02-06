@@ -1,5 +1,7 @@
 package lt.markav.landmarks.processor.parser.tag;
 
+import com.squareup.javapoet.TypeSpec;
+
 import org.w3c.dom.Element;
 
 import java.util.function.Function;
@@ -14,7 +16,7 @@ public interface Tag {
         return Type.getFor(element).newInstance(element);
     }
 
-    void generateFiled();
+    void declareField(TypeSpec.Builder classBuilder);
 
     void generateInitialization();
 

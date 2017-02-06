@@ -1,5 +1,7 @@
 package lt.markav.landmarks.processor.parser;
 
+import android.util.ArraySet;
+
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
@@ -8,10 +10,13 @@ import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
@@ -21,6 +26,7 @@ import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 
 import lt.markav.landmarks.processor.Logging;
+import lt.markav.landmarks.processor.parser.tag.IncludeTag;
 import lt.markav.landmarks.processor.parser.tag.Tag;
 
 public class LayoutsParser implements Logging {
@@ -51,35 +57,34 @@ public class LayoutsParser implements Logging {
         throw new IllegalStateException("root dir not found: no parent has 'build.gradle'");
     }
 
-    public List<Layout> parseAllLayouts() {
-        List<Layout> layouts = findLayouts();
+    public List<Layout> parseLayouts() {
+        Map<String, Layout> layouts = findLayouts();
         parseLayouts(layouts);
-        prepareLayouts(layouts);
-        return layouts;
+        resolveIncludes(layouts);
+        return new ArrayList<>(layouts.values());
     }
 
-    private void prepareLayouts(List<Layout> layouts) {
-        layouts.stream().forEach(Layout::prepare);
-        layouts.forEach(layout -> {
-//            List<Vieww> includes = layout.getTags().stream()
-//                    .filter(view -> view.getType().equals("include"))
-//                    .collect(Collectors.toList());
-//            if (includes.isEmpty()) {
-//                return;
-//            }
-//
-//            List<Vieww> inheritedViews = includes.stream().flatMap(include ->
-//                    layouts.stream()
-//                            .filter(layout1 -> layout1.getName().equals(include.getLayout()))
-//                            .flatMap(l -> l.getViews().stream())
-//            ).collect(Collectors.toList());
-//
-//            layout.getViews().removeAll(includes);
-//            layout.getViews().addAll(inheritedViews);
+    private void resolveIncludes(Map<String, Layout> layouts) {
+        layouts.values().stream().forEach(layout -> {
+            List<IncludeTag> includes = filterIncludes(layout);
+
+            Set<Tag> inheritedTags = includes.stream().flatMap(include ->
+                    layouts.get(include.getLayoutName()).getTags().stream())
+                    .collect(Collectors.toSet());
+
+            layout.getTags().removeAll(includes);
+            layout.getTags().addAll(inheritedTags);
         });
     }
 
-    private List<Layout> findLayouts() {
+    private List<IncludeTag> filterIncludes(Layout layout) {
+        return layout.getTags().stream()
+                .filter(tag -> tag instanceof IncludeTag)
+                .map(tag -> (IncludeTag) tag)
+                .collect(Collectors.toList());
+    }
+
+    private Map<String, Layout> findLayouts() {
         List<File> layoutFolders = findLayoutFolders(root);
         return resolveLayouts(layoutFolders);
     }
@@ -103,7 +108,7 @@ public class LayoutsParser implements Logging {
         return layoutFolders;
     }
 
-    private List<Layout> resolveLayouts(List<File> layoutFolders) {
+    private Map<String, Layout> resolveLayouts(List<File> layoutFolders) {
         Map<String, Layout> layouts = new HashMap<>();
 
         layoutFolders.stream()
@@ -115,38 +120,48 @@ public class LayoutsParser implements Logging {
                     layouts.get(xml.getName()).addXml(xml);
                 });
 
-        return new ArrayList<>(layouts.values());
+        return layouts;
     }
 
-    private void parseLayouts(List<Layout> layouts) {
-        layouts.forEach(layout ->
-                layout.getXmls().forEach(xml ->
-                        layout.addViews(parseLayout(xml))));
+    private void parseLayouts(Map<String, Layout> layouts) {
+        layouts.values().forEach(layout -> {
+            layout.getXmls().forEach(xml -> {
+                layout.addTags(parseLayout(xml));
+            });
+        });
     }
 
-    private List<Tag> parseLayout(File xml) {
+    private Set<Tag> parseLayout(File xml) {
         try {
             List<Element> elementsToSearch = new ArrayList<>();
             elementsToSearch.add(documentBuilder.parse(xml).getDocumentElement());
-            List<Tag> tags = new ArrayList<>();
+            Set<Tag> tags = new HashSet<>();
+
             for (int i = 0; i < elementsToSearch.size(); i++) {
                 Element element = elementsToSearch.get(i);
                 tags.add(Tag.parse(element));
 
-                if (element.hasChildNodes()) {
-                    NodeList childNodes = element.getChildNodes();
-                    for (int j = 0; j < childNodes.getLength(); j++) {
-                        Node item = childNodes.item(j);
-                        if (item.getNodeType() == Node.ELEMENT_NODE) {
-                            elementsToSearch.add((Element) item);
-                        }
-                    }
-                }
+                elementsToSearch.addAll(getSubElements(element));
             }
 
             return tags;
         } catch (Exception e) {
-            return Collections.EMPTY_LIST;
+            log(e.getMessage());
+            return Collections.EMPTY_SET;
         }
+    }
+
+    private List<Element> getSubElements(Element element) {
+        List<Element> subElements = new ArrayList<>();
+        if (element.hasChildNodes()) {
+            NodeList childNodes = element.getChildNodes();
+            for (int j = 0; j < childNodes.getLength(); j++) {
+                Node item = childNodes.item(j);
+                if (item.getNodeType() == Node.ELEMENT_NODE) {
+                    subElements.add((Element) item);
+                }
+            }
+        }
+        return subElements;
     }
 }

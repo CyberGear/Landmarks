@@ -1,8 +1,8 @@
 package lt.markav.landmarks.processor.parser.tag;
 
-import org.w3c.dom.Element;
+import com.squareup.javapoet.TypeSpec;
 
-import lt.markav.landmarks.processor.parser.tag.Tag;
+import org.w3c.dom.Element;
 
 public class FragmentTag implements Tag {
 
@@ -17,7 +17,7 @@ public class FragmentTag implements Tag {
     }
 
     @Override
-    public void generateFiled() {
+    public void declareField(TypeSpec.Builder classBuilder) {
 
     }
 
@@ -34,5 +34,15 @@ public class FragmentTag implements Tag {
     @Override
     public String toString() {
         return rawId + rawTag + " " + rawName;
+    }
+
+    @Override
+    public int hashCode() {
+        return toString().hashCode();
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        return toString().equals("" + obj);
     }
 }
