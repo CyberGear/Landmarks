@@ -1,1 +1,1 @@
-include ':app', ':landmarks', ':landmarksprocessor'
+include ':app', ':LegendsOfLayouts', ':LegendsOfLayoutsProcessor'

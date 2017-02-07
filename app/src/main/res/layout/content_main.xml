@@ -10,7 +10,7 @@
     android:paddingRight="@dimen/activity_horizontal_margin"
     android:paddingTop="@dimen/activity_vertical_margin"
     app:layout_behavior="@string/appbar_scrolling_view_behavior"
-    tools:context="lt.markav.landmarks.MainActivity"
+    tools:context="lt.markav.legendsoflayouts.MainActivity"
     tools:showIn="@layout/activity_main">
 
     <TextView
@@ -24,7 +24,7 @@
         android:layout_height="wrap_content" />
 
     <fragment
-        android:name="lt.markav.landmarks.ColorFragment"
+        android:name="lt.markav.legendsoflayouts.ColorFragment"
         android:layout_width="50dp"
         android:layout_height="50dp"
         android:tag="@string/app_name" />

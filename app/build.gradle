@@ -5,7 +5,7 @@ android {
     compileSdkVersion 25
     buildToolsVersion "25.0.0"
     defaultConfig {
-        applicationId "lt.markav.landmarks"
+        applicationId "lt.markav.legendsoflayouts"
         minSdkVersion 14
         targetSdkVersion 25
         versionCode 1
@@ -35,6 +35,6 @@ dependencies {
     compile 'com.android.support:design:25.0.1'
     testCompile 'junit:junit:4.12'
 
-    provided project(':landmarks')
-    apt project(':landmarksprocessor')
+    provided project(':LegendsOfLayouts')
+    apt project(':LegendsOfLayoutsProcessor')
 }
