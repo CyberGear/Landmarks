@@ -1,5 +1,6 @@
 package lt.markav.landmarks.processor.parser.tag;
 
+import com.squareup.javapoet.MethodSpec;
 import com.squareup.javapoet.TypeSpec;
 
 import org.w3c.dom.Element;
@@ -22,7 +23,7 @@ public class FragmentTag implements Tag {
     }
 
     @Override
-    public void generateInitialization() {
+    public void generateInitialization(MethodSpec.Builder builder, String name) {
 
     }
 

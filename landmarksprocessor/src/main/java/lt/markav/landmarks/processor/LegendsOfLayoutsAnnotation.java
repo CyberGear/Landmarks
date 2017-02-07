@@ -8,21 +8,21 @@ import javax.lang.model.element.TypeElement;
 import javax.lang.model.type.DeclaredType;
 import javax.lang.model.type.MirroredTypeException;
 
-import lt.markav.landmarks.annotation.WithLandmarks;
+import lt.markav.landmarks.annotation.LegendsOfLayouts;
 
-public class WithLandmarksAnnotation {
+public class LegendsOfLayoutsAnnotation {
 
     private final String appId;
 
-    public WithLandmarksAnnotation(RoundEnvironment env) {
-        Optional<? extends Element> element = env.getElementsAnnotatedWith(WithLandmarks.class)
+    public LegendsOfLayoutsAnnotation(RoundEnvironment env) {
+        Optional<? extends Element> element = env.getElementsAnnotatedWith(LegendsOfLayouts.class)
                 .stream().findFirst();
 
         TypeElement typeElement = (TypeElement) element.orElseThrow(() ->
-                new LandmarksException("No class annotated with 'WithLandmarks' annotation")
+                new LegendException("No class annotated with 'LegendsOfLayouts' annotation")
         );
 
-        WithLandmarks annotation = typeElement.getAnnotation(WithLandmarks.class);
+        LegendsOfLayouts annotation = typeElement.getAnnotation(LegendsOfLayouts.class);
 
         String appId;
         try {

@@ -1,5 +1,6 @@
 package lt.markav.landmarks.processor.parser.tag;
 
+import com.squareup.javapoet.MethodSpec;
 import com.squareup.javapoet.TypeSpec;
 
 import org.w3c.dom.Element;
@@ -8,7 +9,7 @@ import java.util.function.Function;
 import java.util.regex.Pattern;
 import java.util.stream.Stream;
 
-import lt.markav.landmarks.processor.LandmarksException;
+import lt.markav.landmarks.processor.LegendException;
 
 public interface Tag {
 
@@ -18,7 +19,7 @@ public interface Tag {
 
     void declareField(TypeSpec.Builder classBuilder);
 
-    void generateInitialization();
+    void generateInitialization(MethodSpec.Builder builder, String name);
 
     boolean isValid();
 
@@ -40,7 +41,7 @@ public interface Tag {
                     .filter(type -> type.pattern.matcher(element.getTagName()).matches())
                     .findFirst()
                     .orElseThrow(() ->
-                            new LandmarksException("Unknown view type: " + element.getTagName()));
+                            new LegendException("Unknown view type: " + element.getTagName()));
         }
 
         private Tag newInstance(Element element) {

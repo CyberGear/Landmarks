@@ -1,14 +1,23 @@
 package lt.markav.landmarks.processor;
 
-import com.squareup.javapoet.ClassName;
+import android.app.Activity;
+import android.view.View;
+
 import com.squareup.javapoet.JavaFile;
+import com.squareup.javapoet.MethodSpec;
+import com.squareup.javapoet.ParameterSpec;
 import com.squareup.javapoet.TypeSpec;
 
+import java.util.Set;
 import java.util.stream.Stream;
 
-import javax.lang.model.element.Modifier;
-
 import lt.markav.landmarks.processor.parser.Layout;
+import lt.markav.landmarks.processor.parser.tag.Tag;
+
+import static com.squareup.javapoet.MethodSpec.constructorBuilder;
+import static com.squareup.javapoet.ParameterSpec.builder;
+import static javax.lang.model.element.Modifier.FINAL;
+import static javax.lang.model.element.Modifier.PUBLIC;
 
 public class ClassGenerator implements Logging {
 
@@ -28,16 +37,15 @@ public class ClassGenerator implements Logging {
         return Stream.of(name.replace(".xml", "").split("_"))
                 .map(str -> str.substring(0, 1).toUpperCase() + str.substring(1))
                 .reduce((str1, str2) -> str1 + str2)
-                .orElseThrow(() -> new LandmarksException("Failed to createClassName"))
-                + "Landmarks";
+                .orElseThrow(() -> new LegendException("Failed to createClassName"))
+                + "Legend";
     }
-
 
     public JavaFile generate() {
         try {
             return createClassFile();
         } catch (Exception cause) {
-            throw new LandmarksException(cause);
+            throw new LegendException(cause);
         }
     }
 
@@ -45,27 +53,34 @@ public class ClassGenerator implements Logging {
 
         TypeSpec.Builder classBuilder = TypeSpec
                 .classBuilder(className)
-                .addModifiers(Modifier.PUBLIC);
+                .addModifiers(PUBLIC, FINAL);
 
+        //create fields
         layout.getTags().forEach(tag -> tag.declareField(classBuilder));
 
-        TypeSpec landmarksClass = classBuilder.build();
+        //create activity constructor
+        MethodSpec constructorForActivity = createConstructor(
+                Activity.class, "activity", layout.getTags());
+        classBuilder.addMethod(constructorForActivity);
 
-        return JavaFile.builder(appId, landmarksClass).build();
+        //create view constructor
+        MethodSpec constructorForView = createConstructor(
+                View.class, "view", layout.getTags());
+        classBuilder.addMethod(constructorForView);
+
+        //create file
+        TypeSpec landmarksClass = classBuilder.build();
+        JavaFile javaFile = JavaFile.builder(appId, landmarksClass).build();
+        javaFile.writeTo(System.out);
+        return javaFile;
     }
 
-//        MethodSpec.constructorBuilder()
+    private MethodSpec createConstructor(Class<?> aClass, String name, Set<Tag> tags) {
+        ParameterSpec param = builder(aClass, name).build();
+        MethodSpec.Builder builder = constructorBuilder().addModifiers(PUBLIC).addParameter(param);
+        tags.stream().forEach(tag -> tag.generateInitialization(builder, name));
+        return builder.build();
+    }
 
-
-
-
-//        ParameterSpec android = ParameterSpec.builder(String.class, "android")
-//                .addModifiers(Modifier.FINAL)
-//                .build();
-//
-//        MethodSpec welcomeOverlords = MethodSpec.methodBuilder("welcomeOverlords")
-//                .addParameter(android)
-//                .addParameter(String.class, "robot", Modifier.FINAL)
-//                .build();
 
 }

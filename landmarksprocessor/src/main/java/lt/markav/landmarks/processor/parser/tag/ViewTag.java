@@ -1,7 +1,7 @@
 package lt.markav.landmarks.processor.parser.tag;
 
 import com.squareup.javapoet.ClassName;
-import com.squareup.javapoet.FieldSpec;
+import com.squareup.javapoet.MethodSpec;
 import com.squareup.javapoet.TypeSpec;
 
 import org.w3c.dom.Element;
@@ -11,10 +11,14 @@ import java.util.stream.Stream;
 
 import javax.lang.model.element.Modifier;
 
+import static lt.markav.landmarks.processor.util.ClassNameUtil.classNameForType;
+
 public class ViewTag implements Tag {
 
     private String type;
     private String rawId;
+    private ClassName argType;
+    private String argName;
 
     public ViewTag(Element element) {
         type = element.getTagName();
@@ -23,7 +27,10 @@ public class ViewTag implements Tag {
 
     @Override
     public void declareField(TypeSpec.Builder classBuilder) {
-        classBuilder.addField(getTypeName(), getArgName(), Modifier.PUBLIC);
+        classBuilder.addField(
+                argType = classNameForType(type),
+                argName = getArgName(),
+                Modifier.PUBLIC, Modifier.FINAL);
     }
 
     private String getArgName() {
@@ -31,35 +38,23 @@ public class ViewTag implements Tag {
                 .replace("@android:id/", "android_");
 
         String camelCase = Stream.of(cleanId.split("_"))
-                .map(this::camelCase)
+                .map(this::FirstUpperCase)
                 .collect(Collectors.joining());
         return camelCase.substring(0, 1).toLowerCase() + camelCase.substring(1);
     }
 
-    private String camelCase(String str) {
+    private String FirstUpperCase(String str) {
         return str.substring(0, 1).toUpperCase() + str.substring(1);
     }
 
-    private ClassName getTypeName() {
-        try {
-            return ClassName.get(Class.forName(type));
-        } catch (ClassNotFoundException ignore) { }
-        if (type.contains("\\.")) {
-            String simpleName = Stream.of(type.split("\\.")).reduce((a, b) -> b).orElse("");
-            return ClassName.get(type.replace("." + simpleName, ""), simpleName);
-        }
-        try {
-            return ClassName.get(Class.forName("android.view." + type));
-        } catch (ClassNotFoundException ignore) { }
-        try {
-            return ClassName.get(Class.forName("android.widget." + type));
-        } catch (ClassNotFoundException ignore) { }
-        return null;
-    }
-
     @Override
-    public void generateInitialization() {
-
+    public void generateInitialization(MethodSpec.Builder builder, String name) {
+        builder.addStatement("$L = ($T) $L.findViewById($L)",
+                argName, argType, name,
+                rawId.replace("@+id/", "R.id.")
+                        .replace("@id/", "R.id.")
+                        .replace("@android:id/", "android.R.id.")
+        );
     }
 
     @Override

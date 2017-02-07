@@ -19,15 +19,15 @@ import javax.lang.model.element.TypeElement;
 import javax.lang.model.util.Elements;
 import javax.lang.model.util.Types;
 
-import lt.markav.landmarks.annotation.WithLandmarks;
+import lt.markav.landmarks.annotation.LegendsOfLayouts;
 import lt.markav.landmarks.processor.parser.Layout;
 import lt.markav.landmarks.processor.parser.LayoutsParser;
 
 import static javax.tools.Diagnostic.Kind.WARNING;
 
-@SupportedAnnotationTypes("lt.markav.landmarks.annotation.WithLandmarks")
+@SupportedAnnotationTypes("lt.markav.landmarks.annotation.LegendsOfLayouts")
 @SupportedSourceVersion(SourceVersion.RELEASE_7)
-public class LandmarksProcessor extends AbstractProcessor implements Logging {
+public class LegendsOfLayoutsProcessor extends AbstractProcessor implements Logging {
 
     private Types typeUtils;
     private Elements elementUtils;
@@ -45,7 +45,7 @@ public class LandmarksProcessor extends AbstractProcessor implements Logging {
 
     @Override
     public Set<String> getSupportedAnnotationTypes() {
-        return Collections.singleton(WithLandmarks.class.getCanonicalName());
+        return Collections.singleton(LegendsOfLayouts.class.getCanonicalName());
     }
 
     @Override
@@ -67,7 +67,7 @@ public class LandmarksProcessor extends AbstractProcessor implements Logging {
         LayoutsParser parser = new LayoutsParser(processingEnv);
 
         List<Layout> layouts = parser.parseLayouts();
-        WithLandmarksAnnotation annotation = new WithLandmarksAnnotation(roundEnv);
+        LegendsOfLayoutsAnnotation annotation = new LegendsOfLayoutsAnnotation(roundEnv);
 
         layouts.forEach(this::log);
         layouts.stream()
@@ -80,7 +80,7 @@ public class LandmarksProcessor extends AbstractProcessor implements Logging {
         try {
             javaFile.writeTo(filer);
         } catch (IOException e) {
-            throw new LandmarksException(e.getMessage());
+            throw new LegendException(e.getMessage());
         }
     }
 
