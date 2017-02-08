@@ -3,16 +3,17 @@ package lt.markav.legendsoflayouts.processor;
 import android.app.Activity;
 import android.view.View;
 
+import com.squareup.javapoet.ClassName;
 import com.squareup.javapoet.JavaFile;
 import com.squareup.javapoet.MethodSpec;
 import com.squareup.javapoet.ParameterSpec;
+import com.squareup.javapoet.TypeName;
 import com.squareup.javapoet.TypeSpec;
 
-import java.util.Set;
 import java.util.stream.Stream;
 
 import lt.markav.legendsoflayouts.processor.parser.Layout;
-import lt.markav.legendsoflayouts.processor.parser.tag.Tag;
+import lt.markav.legendsoflayouts.processor.util.Logging;
 
 import static com.squareup.javapoet.MethodSpec.constructorBuilder;
 import static com.squareup.javapoet.ParameterSpec.builder;
@@ -55,32 +56,59 @@ public class ClassGenerator implements Logging {
                 .classBuilder(className)
                 .addModifiers(PUBLIC, FINAL);
 
-        //create fields
         layout.getTags().forEach(tag -> tag.declareField(classBuilder));
 
-        //create activity constructor
-        MethodSpec constructorForActivity = createConstructor(
-                Activity.class, "activity", layout.getTags());
+        MethodSpec constructorForActivity = createConstructorForActivity();
+        MethodSpec constructorForView = createConstructorForView();
+        MethodSpec constructorForSupportFragment = createConstructorForSupportFragment();
+
         classBuilder.addMethod(constructorForActivity);
-
-        //create view constructor
-        MethodSpec constructorForView = createConstructor(
-                View.class, "view", layout.getTags());
         classBuilder.addMethod(constructorForView);
+        classBuilder.addMethod(constructorForSupportFragment);
 
-        //create file
         TypeSpec landmarksClass = classBuilder.build();
-        JavaFile javaFile = JavaFile.builder(appId, landmarksClass).build();
-        javaFile.writeTo(System.out);
-        return javaFile;
+        return JavaFile.builder(appId, landmarksClass).build();
     }
 
-    private MethodSpec createConstructor(Class<?> aClass, String name, Set<Tag> tags) {
+    private MethodSpec createConstructorForActivity() {
+        return createConstructor(Activity.class, "activity", this::generateInitialization);
+    }
+
+    private MethodSpec createConstructorForView() {
+        return createConstructor(View.class, "view", this::generateInitialization);
+    }
+
+    private MethodSpec createConstructorForSupportFragment() {
+        TypeName fragment = ClassName.get("android.support.v4.app", "Fragment");
+        return createConstructor(fragment, "fragment", (builder, name) -> {
+            builder.addStatement("this($L.getView())", name);
+        });
+    }
+
+    private MethodSpec createConstructor(Class<?> aClass, String name, MethodFiller filler) {
         ParameterSpec param = builder(aClass, name).build();
+        return createConstructor(param, filler);
+    }
+
+    private MethodSpec createConstructor(TypeName className, String name, MethodFiller filler) {
+        ParameterSpec param = builder(className, name).build();
+        return createConstructor(param, filler);
+    }
+
+    private MethodSpec createConstructor(ParameterSpec param, MethodFiller filler) {
         MethodSpec.Builder builder = constructorBuilder().addModifiers(PUBLIC).addParameter(param);
-        tags.stream().forEach(tag -> tag.generateInitialization(builder, name));
+        filler.fill(builder, param.name);
         return builder.build();
     }
 
+    private void generateInitialization(MethodSpec.Builder builder, String name) {
+        layout.getTags().stream().forEach(tag -> tag.generateInitialization(builder, name));
+    }
+
+    public interface MethodFiller {
+
+        void fill(MethodSpec.Builder builder, String name);
+
+    }
 
 }

@@ -7,7 +7,7 @@ import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
 
-import lt.markav.legendsoflayouts.processor.Logging;
+import lt.markav.legendsoflayouts.processor.util.Logging;
 import lt.markav.legendsoflayouts.processor.parser.tag.Tag;
 
 public class Layout implements Logging {

@@ -22,7 +22,7 @@ import javax.tools.JavaFileObject;
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 
-import lt.markav.legendsoflayouts.processor.Logging;
+import lt.markav.legendsoflayouts.processor.util.Logging;
 import lt.markav.legendsoflayouts.processor.parser.tag.IncludeTag;
 import lt.markav.legendsoflayouts.processor.parser.tag.Tag;
 

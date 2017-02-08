@@ -22,6 +22,7 @@ import javax.lang.model.util.Types;
 import lt.markav.legendsoflayouts.annotation.LegendsOfLayouts;
 import lt.markav.legendsoflayouts.processor.parser.Layout;
 import lt.markav.legendsoflayouts.processor.parser.LayoutsParser;
+import lt.markav.legendsoflayouts.processor.util.Logging;
 
 import static javax.tools.Diagnostic.Kind.WARNING;
 

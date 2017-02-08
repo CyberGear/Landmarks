@@ -1,4 +1,4 @@
-package lt.markav.legendsoflayouts.processor;
+package lt.markav.legendsoflayouts.processor.util;
 
 public interface Logging {
 
