@@ -10,7 +10,7 @@
 
 Creates legend class for all layouts, and resolves all view with ids. Imagine it's like maps legend.
 
-![description][https://raw.githubusercontent.com/CyberGear/LegendsOfLayouts/master/layout_example.png]
+![description](https://raw.githubusercontent.com/CyberGear/LegendsOfLayouts/master/layout_example.png)
 
 ## Including to your project
 
