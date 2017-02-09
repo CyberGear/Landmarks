@@ -9,21 +9,17 @@ import lt.markav.legendsoflayouts.processor.LegendException;
 public class ClassNameUtil {
 
     public static ClassName classNameForType(String type) {
-        try {
-            return ClassName.get(Class.forName(type));
-        } catch (ClassNotFoundException ignore) { }
-        if (type.contains("\\.")) {
-            String simpleName = Stream.of(type.split("\\.")).reduce((a, b) -> b).orElse("");
+        if (type.contains(".")) {
+            new Logging(){}.log("Construct for type: " + type);
+            String[] parts = type.split("\\.");
+            String simpleName = parts[parts.length - 1];
             return ClassName.get(type.replace("." + simpleName, ""), simpleName);
         }
-        try {
-            return ClassName.get(Class.forName("android.view." + type));
-        } catch (ClassNotFoundException ignored) { }
-        try {
-            return ClassName.get(Class.forName("android.widget." + type));
-        } catch (ClassNotFoundException ignored) { }
-
-        throw new LegendException("Class '" + type + "' not found");
+        ClassName className = Android.getClassName(type);
+        if (className == null) {
+            throw new LegendException("Class '" + type + "' not found");
+        }
+        return className;
     }
 
 }

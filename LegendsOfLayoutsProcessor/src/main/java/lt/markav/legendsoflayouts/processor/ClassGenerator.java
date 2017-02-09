@@ -1,8 +1,5 @@
 package lt.markav.legendsoflayouts.processor;
 
-import android.app.Activity;
-import android.view.View;
-
 import com.squareup.javapoet.ClassName;
 import com.squareup.javapoet.JavaFile;
 import com.squareup.javapoet.MethodSpec;
@@ -13,6 +10,7 @@ import com.squareup.javapoet.TypeSpec;
 import java.util.stream.Stream;
 
 import lt.markav.legendsoflayouts.processor.parser.Layout;
+import lt.markav.legendsoflayouts.processor.util.Android;
 import lt.markav.legendsoflayouts.processor.util.Logging;
 
 import static com.squareup.javapoet.MethodSpec.constructorBuilder;
@@ -71,11 +69,11 @@ public class ClassGenerator implements Logging {
     }
 
     private MethodSpec createConstructorForActivity() {
-        return createConstructor(Activity.class, "activity", this::generateInitialization);
+        return createConstructor(Android.ACTIVITY, "activity", this::generateInitialization);
     }
 
     private MethodSpec createConstructorForView() {
-        return createConstructor(View.class, "view", this::generateInitialization);
+        return createConstructor(Android.VIEW, "view", this::generateInitialization);
     }
 
     private MethodSpec createConstructorForSupportFragment() {
@@ -85,17 +83,8 @@ public class ClassGenerator implements Logging {
         });
     }
 
-    private MethodSpec createConstructor(Class<?> aClass, String name, MethodFiller filler) {
-        ParameterSpec param = builder(aClass, name).build();
-        return createConstructor(param, filler);
-    }
-
     private MethodSpec createConstructor(TypeName className, String name, MethodFiller filler) {
         ParameterSpec param = builder(className, name).build();
-        return createConstructor(param, filler);
-    }
-
-    private MethodSpec createConstructor(ParameterSpec param, MethodFiller filler) {
         MethodSpec.Builder builder = constructorBuilder().addModifiers(PUBLIC).addParameter(param);
         filler.fill(builder, param.name);
         return builder.build();
