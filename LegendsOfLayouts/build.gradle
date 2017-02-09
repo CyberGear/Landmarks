@@ -1,8 +1,34 @@
 apply plugin: 'java'
+apply plugin: 'maven-publish'
+
+sourceCompatibility = "1.7"
+targetCompatibility = "1.7"
+
+publishing {
+
+    repositories {
+        maven {
+            url "$projectDir/../repo/"
+        }
+    }
+
+    publications {
+        maven(MavenPublication) {
+            groupId appGroupId
+            artifactId 'legends-of-layouts'
+            version appVersion
+
+            from components.java
+        }
+    }
+}
+
+task deploy << {
+    ['sh', '-c', "git add ${projectDir}/../repo/."].execute().text.trim()
+}
+
+deploy.dependsOn publish
 
 dependencies {
     compile fileTree(dir: 'libs', include: ['*.jar'])
 }
-
-sourceCompatibility = "1.7"
-targetCompatibility = "1.7"

@@ -1,7 +1,27 @@
 apply plugin: 'java'
+apply plugin: 'maven-publish'
 
 sourceCompatibility = "1.8"
 targetCompatibility = "1.8"
+
+publishing {
+
+    repositories {
+        maven {
+            url "$projectDir/../repo/"
+        }
+    }
+
+    publications {
+        maven(MavenPublication) {
+            groupId appGroupId
+            artifactId 'legends-of-layouts-processor'
+            version appVersion
+
+            from components.java
+        }
+    }
+}
 
 dependencies {
     compile fileTree(include: ['*.jar'], dir: 'libs')
