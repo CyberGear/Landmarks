@@ -4,7 +4,7 @@
   <modelVersion>4.0.0</modelVersion>
   <groupId>lt.markav</groupId>
   <artifactId>legends-of-layouts-processor</artifactId>
-  <version>0</version>
+  <version>0.1.0</version>
   <dependencies>
     <dependency>
       <groupId>com.squareup</groupId>
@@ -15,7 +15,7 @@
     <dependency>
       <groupId>lt.markav</groupId>
       <artifactId>legends-of-layouts</artifactId>
-      <version>0</version>
+      <version>0.1.0</version>
       <scope>runtime</scope>
     </dependency>
   </dependencies>

@@ -3,6 +3,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical"
+    android:focusableInTouchMode="true"
     android:padding="24dp">
 
     <android.support.design.widget.TextInputLayout
@@ -10,7 +11,7 @@
         android:layout_height="wrap_content">
 
         <EditText
-            android:id="@+id/name"
+            android:id="@+id/input_name"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:hint="Name"
@@ -23,7 +24,7 @@
         android:layout_height="wrap_content">
 
         <EditText
-            android:id="@+id/surname"
+            android:id="@+id/input_surname"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:hint="Surname"
@@ -36,7 +37,7 @@
         android:layout_height="wrap_content">
 
         <EditText
-            android:id="@+id/age"
+            android:id="@+id/input_age"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:hint="Age"
@@ -51,9 +52,8 @@
 
     <Button
         android:id="@+id/submitButton"
-        android:layout_width="wrap_content"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_gravity="end"
         android:enabled="false"
         android:text="Submit" />
 

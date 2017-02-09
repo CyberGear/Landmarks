@@ -35,6 +35,9 @@ dependencies {
     compile 'com.android.support:design:25.0.1'
     testCompile 'junit:junit:4.12'
 
-    provided project(':LegendsOfLayouts')
-    apt project(':LegendsOfLayoutsProcessor')
+    provided 'lt.markav:legends-of-layouts:0'
+    apt 'lt.markav:legends-of-layouts-processor:0'
+
+//    provided project(':LegendsOfLayouts')
+//    apt project(':LegendsOfLayoutsProcessor')
 }

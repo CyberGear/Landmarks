@@ -1,5 +1,5 @@
 project.ext.set("appGroupId", "lt.markav")
-project.ext.set("appVersion", "0")
+project.ext.set("appVersion", "0.1.0")
 
 buildscript {
     repositories {
@@ -14,6 +14,9 @@ buildscript {
 allprojects {
     repositories {
         jcenter()
+        maven {
+            url "https://github.com/CyberGear/LegendsOfLayouts/raw/master/repo/"
+        }
     }
 }
 

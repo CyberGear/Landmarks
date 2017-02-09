@@ -24,7 +24,11 @@ public class FormFragment extends Fragment {
         super.onActivityCreated(savedInstanceState);
         FragmentFormLegend legend = new FragmentFormLegend(this);
 
-        new FormFillListener(legend.submitButton, legend.name, legend.surname, legend.age);
+        new FormFillListener(
+                legend.submitButton,
+                legend.inputName,
+                legend.inputSurname,
+                legend.inputAge);
     }
 
     private static class FormFillListener implements TextWatcher {
