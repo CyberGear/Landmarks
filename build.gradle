@@ -7,7 +7,6 @@ buildscript {
     }
     dependencies {
         classpath 'com.android.tools.build:gradle:2.2.3'
-        classpath 'com.neenbedankt.gradle.plugins:android-apt:1.8'
     }
 }
 
@@ -17,6 +16,18 @@ allprojects {
         maven {
             url "https://github.com/CyberGear/LegendsOfLayouts/raw/master/repo/"
         }
+//        maven {
+//            name "env1"
+//            url "${System.env.ANDROID_HOME}/extras/android/m2repository/"
+//        }
+//        maven {
+//            name "env2"
+//            url "${System.getenv('ANDROID_HOME')}/extras/android/m2repository/"
+//        }
+//        maven {
+//            name "had1"
+//            url "/home/COMMON_DATA/lib/android_sdk/extras/android/m2repository/"
+//        }
     }
 }
 

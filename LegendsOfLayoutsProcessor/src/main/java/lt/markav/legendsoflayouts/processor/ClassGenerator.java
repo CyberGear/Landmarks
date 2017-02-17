@@ -9,6 +9,7 @@ import com.squareup.javapoet.TypeSpec;
 
 import java.util.stream.Stream;
 
+import lt.markav.legendsoflayouts.annotation.FragmentsType;
 import lt.markav.legendsoflayouts.processor.parser.Layout;
 import lt.markav.legendsoflayouts.processor.util.Android;
 import lt.markav.legendsoflayouts.processor.util.Logging;
@@ -20,13 +21,15 @@ import static javax.lang.model.element.Modifier.PUBLIC;
 
 public class ClassGenerator implements Logging {
 
+    @FragmentsType
+    private final String fragmentsType;
     private final String appId;
-    private Layout layout;
+    private final Layout layout;
+    private final String className;
 
-    private String className;
-
-    public ClassGenerator(String appId, Layout layout) {
-        this.appId = appId;
+    public ClassGenerator(LegendsOfLayoutsAnnotation annotation, Layout layout) {
+        this.appId = annotation.getAppId();
+        this.fragmentsType = annotation.getFragmentsType();
         this.layout = layout;
 
         className = createClassName(layout.getName());
@@ -58,11 +61,17 @@ public class ClassGenerator implements Logging {
 
         MethodSpec constructorForActivity = createConstructorForActivity();
         MethodSpec constructorForView = createConstructorForView();
-        MethodSpec constructorForSupportFragment = createConstructorForSupportFragment();
+        if (!fragmentsType.equals(FragmentsType.NATIVE)) {
+            MethodSpec constructorForSupportFragment = createConstructorForSupportFragment();
+            classBuilder.addMethod(constructorForSupportFragment);
+        }
+        if (!fragmentsType.equals(FragmentsType.SUPPORT)) {
+            MethodSpec constructorForNativeFragment = createConstructorForNativeFragment();
+            classBuilder.addMethod(constructorForNativeFragment);
+        }
 
         classBuilder.addMethod(constructorForActivity);
         classBuilder.addMethod(constructorForView);
-        classBuilder.addMethod(constructorForSupportFragment);
 
         TypeSpec landmarksClass = classBuilder.build();
         return JavaFile.builder(appId, landmarksClass).build();
@@ -78,6 +87,13 @@ public class ClassGenerator implements Logging {
 
     private MethodSpec createConstructorForSupportFragment() {
         TypeName fragment = ClassName.get("android.support.v4.app", "Fragment");
+        return createConstructor(fragment, "fragment", (builder, name) -> {
+            builder.addStatement("this($L.getView())", name);
+        });
+    }
+
+    private MethodSpec createConstructorForNativeFragment() {
+        TypeName fragment = ClassName.get("android.app", "Fragment");
         return createConstructor(fragment, "fragment", (builder, name) -> {
             builder.addStatement("this($L.getView())", name);
         });

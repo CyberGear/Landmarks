@@ -8,5 +8,14 @@ import java.lang.annotation.Target;
 @Target(ElementType.TYPE)
 @Retention(RetentionPolicy.SOURCE)
 public @interface LegendsOfLayouts {
-    Class<?> value();
+
+    @Alias(forValue = "rClass")
+    Class<?> value() default Void.class;
+
+    @Alias(forValue = "value")
+    Class<?> rClass() default Void.class;
+
+    @FragmentsType
+    String fragmentsType() default FragmentsType.ALL;
+
 }

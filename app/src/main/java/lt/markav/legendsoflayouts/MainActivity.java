@@ -5,9 +5,10 @@ import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentPagerAdapter;
 import android.support.v7.app.AppCompatActivity;
 
+import lt.markav.legendsoflayouts.annotation.FragmentsType;
 import lt.markav.legendsoflayouts.annotation.LegendsOfLayouts;
 
-@LegendsOfLayouts(R.class)
+@LegendsOfLayouts(rClass = R.class, fragmentsType = FragmentsType.SUPPORT)
 public class MainActivity extends AppCompatActivity {
 
     @Override

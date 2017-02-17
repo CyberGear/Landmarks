@@ -8,11 +8,14 @@ import javax.lang.model.element.TypeElement;
 import javax.lang.model.type.DeclaredType;
 import javax.lang.model.type.MirroredTypeException;
 
+import lt.markav.legendsoflayouts.annotation.FragmentsType;
 import lt.markav.legendsoflayouts.annotation.LegendsOfLayouts;
 
 public class LegendsOfLayoutsAnnotation {
 
     private final String appId;
+    @FragmentsType
+    private final String fragmentsType;
 
     public LegendsOfLayoutsAnnotation(RoundEnvironment env) {
         Optional<? extends Element> element = env.getElementsAnnotatedWith(LegendsOfLayouts.class)
@@ -24,9 +27,22 @@ public class LegendsOfLayoutsAnnotation {
 
         LegendsOfLayouts annotation = typeElement.getAnnotation(LegendsOfLayouts.class);
 
+        fragmentsType = annotation.fragmentsType();
+        String appId;
+        appId = getAppId(annotation::value);
+        if (appId.equals("java.lang")) {
+            appId = getAppId(annotation::rClass);
+        }
+        if (appId.equals("java.lang")) {
+            throw new LegendException("No R class defined in annotation");
+        }
+        this.appId = appId;
+    }
+
+    private String getAppId(ClassGetter classGetter) {
         String appId;
         try {
-            Class<?> aClass = annotation.value();
+            Class<?> aClass = classGetter.getClassParam();
             appId = aClass.getCanonicalName().replace("." + aClass.getSimpleName(), "");
         } catch (MirroredTypeException cause) {
             DeclaredType classTypeMirror = (DeclaredType) cause.getTypeMirror();
@@ -34,17 +50,24 @@ public class LegendsOfLayoutsAnnotation {
             String canonical = classElement.getQualifiedName().toString();
             appId = canonical.replace("." + classElement.getSimpleName().toString(), "");
         }
-
-        this.appId = appId;
+        return appId;
     }
 
     public String getAppId() {
         return appId;
     }
 
+    public String getFragmentsType() {
+        return fragmentsType;
+    }
+
     @Override
     public String toString() {
-        return appId;
+        return appId + ":" + fragmentsType;
+    }
+
+    private interface ClassGetter {
+        Class<?> getClassParam();
     }
 
 }

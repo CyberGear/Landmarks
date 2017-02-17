@@ -24,6 +24,7 @@ import lt.markav.legendsoflayouts.processor.parser.Layout;
 import lt.markav.legendsoflayouts.processor.parser.LayoutsParser;
 import lt.markav.legendsoflayouts.processor.util.Logging;
 
+import static javax.tools.Diagnostic.Kind.ERROR;
 import static javax.tools.Diagnostic.Kind.WARNING;
 
 @SupportedAnnotationTypes("lt.markav.landmarks.annotation.LegendsOfLayouts")
@@ -58,6 +59,7 @@ public class LegendsOfLayoutsProcessor extends AbstractProcessor implements Logg
             processWithErrors(annotations, roundEnv);
         } catch (Exception e) {
             messager.printMessage(WARNING, "SKIPPING: " + e.getMessage());
+            header();
             return false;
         }
         header();
@@ -70,9 +72,11 @@ public class LegendsOfLayoutsProcessor extends AbstractProcessor implements Logg
         List<Layout> layouts = parser.parseLayouts();
         LegendsOfLayoutsAnnotation annotation = new LegendsOfLayoutsAnnotation(roundEnv);
 
+        System.out.println(annotation);
+
         layouts.forEach(this::log);
         layouts.stream()
-                .map(layout -> new ClassGenerator(annotation.getAppId(), layout))
+                .map(layout -> new ClassGenerator(annotation, layout))
                 .map(ClassGenerator::generate)
                 .forEach(this::safe);
     }

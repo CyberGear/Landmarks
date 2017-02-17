@@ -4,8 +4,25 @@ apply plugin: 'maven-publish'
 sourceCompatibility = "1.7"
 targetCompatibility = "1.7"
 
-publishing {
+repositories {
+    // not working
+    maven {
+        name "env1"
+        url "${System.env.ANDROID_HOME}/extras/android/m2repository/"
+    }
+    // not working
+    maven {
+        name "env2"
+        url "${System.getenv('ANDROID_HOME')}/extras/android/m2repository/"
+    }
+    // working
+    maven {
+        name "had1"
+        url "/home/COMMON_DATA/lib/android_sdk/extras/android/m2repository/"
+    }
+}
 
+publishing {
     repositories {
         maven {
             url "$projectDir/../repo/"
@@ -23,6 +40,11 @@ publishing {
     }
 }
 
+task listrepos << {
+    println "Repositories:"
+    project.repositories.each { println "Name: " + it.name + "; url: " + it.url }
+}
+
 task deploy << {
     ['sh', '-c', "git add ${projectDir}/../repo/."].execute().text.trim()
 }
@@ -31,4 +53,5 @@ deploy.dependsOn publish
 
 dependencies {
     compile fileTree(dir: 'libs', include: ['*.jar'])
+    compile 'com.android.support:support-annotations:25.1.1'
 }
