@@ -16,6 +16,6 @@ public @interface LegendsOfLayouts {
     Class<?> rClass() default Void.class;
 
     @FragmentsType
-    String fragmentsType() default FragmentsType.ALL;
+    String fragmentsType() default FragmentsType.SUPPORT;
 
 }

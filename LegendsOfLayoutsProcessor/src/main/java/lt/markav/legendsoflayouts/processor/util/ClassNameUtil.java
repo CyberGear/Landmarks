@@ -10,7 +10,6 @@ public class ClassNameUtil {
 
     public static ClassName classNameForType(String type) {
         if (type.contains(".")) {
-            new Logging(){}.log("Construct for type: " + type);
             String[] parts = type.split("\\.");
             String simpleName = parts[parts.length - 1];
             return ClassName.get(type.replace("." + simpleName, ""), simpleName);
@@ -20,6 +19,11 @@ public class ClassNameUtil {
             throw new LegendException("Class '" + type + "' not found");
         }
         return className;
+    }
+
+    public static String classNameToArgName(ClassName className) {
+        String name = className.simpleName();
+        return name.substring(0, 1).toLowerCase() + name.substring(1);
     }
 
 }

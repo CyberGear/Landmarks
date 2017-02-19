@@ -15,20 +15,21 @@ public class FormFragment extends Fragment {
 
     @Nullable
     @Override
-    public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
+    public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container,
+                             @Nullable Bundle savedInstanceState) {
         return inflater.inflate(R.layout.fragment_form, container, false);
     }
 
     @Override
     public void onActivityCreated(@Nullable Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
-        FragmentFormLegend legend = new FragmentFormLegend(this);
-
-        new FormFillListener(
-                legend.submitButton,
-                legend.inputName,
-                legend.inputSurname,
-                legend.inputAge);
+//        FragmentFormLegend legend = new FragmentFormLegend(this);
+//
+//        new FormFillListener(
+//                legend.buttonSubmit,
+//                legend.editName,
+//                legend.editSurname,
+//                legend.editAge);
     }
 
     private static class FormFillListener implements TextWatcher {

@@ -1,5 +1,10 @@
 # LoL (Legends of Layouts)
 
+*Version:* ***0.2.0***
+
+ - Option to chose witch fragments to use for constructors (native, support or both)
+ -
+
 *Version:* ***0.1.0***
 
  - Creates legend class for all layouts, and resolves all view with ids

@@ -6,7 +6,10 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
+import lt.markav.legendsoflayouts.processor.parser.tag.FragmentTag;
+import lt.markav.legendsoflayouts.processor.parser.tag.ViewTag;
 import lt.markav.legendsoflayouts.processor.util.Logging;
 import lt.markav.legendsoflayouts.processor.parser.tag.Tag;
 
@@ -43,6 +46,14 @@ public class Layout implements Logging {
 
     public Set<Tag> getTags() {
         return tags;
+    }
+
+    public Stream<Tag> streamViews() {
+        return tags.stream().filter(tag -> tag instanceof ViewTag);
+    }
+
+    public Stream<Tag> streamFragments() {
+        return tags.stream().filter(tag -> tag instanceof FragmentTag);
     }
 
     public void addTags(Set<Tag> tags) {

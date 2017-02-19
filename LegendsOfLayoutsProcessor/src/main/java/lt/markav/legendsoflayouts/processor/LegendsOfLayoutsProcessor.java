@@ -15,6 +15,7 @@ import javax.annotation.processing.RoundEnvironment;
 import javax.annotation.processing.SupportedAnnotationTypes;
 import javax.annotation.processing.SupportedSourceVersion;
 import javax.lang.model.SourceVersion;
+import javax.lang.model.element.ElementKind;
 import javax.lang.model.element.TypeElement;
 import javax.lang.model.util.Elements;
 import javax.lang.model.util.Types;
@@ -55,8 +56,9 @@ public class LegendsOfLayoutsProcessor extends AbstractProcessor implements Logg
         if (roundEnv.processingOver()) return true;
 
         header();
+
         try {
-            processWithErrors(annotations, roundEnv);
+            processWithErrors(roundEnv);
         } catch (Exception e) {
             messager.printMessage(WARNING, "SKIPPING: " + e.getMessage());
             header();
@@ -66,23 +68,23 @@ public class LegendsOfLayoutsProcessor extends AbstractProcessor implements Logg
         return true;
     }
 
-    private void processWithErrors(Set<? extends TypeElement> annotations, RoundEnvironment roundEnv) throws Exception {
+    private void processWithErrors(RoundEnvironment roundEnv) throws Exception {
         LayoutsParser parser = new LayoutsParser(processingEnv);
 
         List<Layout> layouts = parser.parseLayouts();
         LegendsOfLayoutsAnnotation annotation = new LegendsOfLayoutsAnnotation(roundEnv);
 
-        System.out.println(annotation);
-
-        layouts.forEach(this::log);
         layouts.stream()
-                .map(layout -> new ClassGenerator(annotation, layout))
+                .filter(layout -> layout.getName().contains("activity_main"))
+                .map(layout -> new ClassGenerator(elementUtils, annotation, layout))
                 .map(ClassGenerator::generate)
                 .forEach(this::safe);
     }
 
     private void safe(JavaFile javaFile) {
+        System.out.println("---------------------------------------------------------------------");
         try {
+            javaFile.writeTo(System.out);
             javaFile.writeTo(filer);
         } catch (IOException e) {
             throw new LegendException(e.getMessage());

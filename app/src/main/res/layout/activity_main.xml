@@ -27,4 +27,18 @@
 
     <include layout="@layout/content_main" />
 
+    <fragment
+        android:id="@+id/native_fragment"
+        android:name="lt.markav.legendsoflayouts.fragment.NativeFragment"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1" />
+
+    <fragment
+        android:id="@+id/support_fragment"
+        android:name="lt.markav.legendsoflayouts.fragment.SupportFragment"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1" />
+
 </LinearLayout>

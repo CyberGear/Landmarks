@@ -118,9 +118,12 @@ public final class Android {
         put("android.view", "TextureView");
         put("android.view", "View");
         put("android.view", "ViewGroup");
+
+        put("android.support.v7.app", "AppCompatActivity");
     }
 
     public static final ClassName ACTIVITY = ClassName.get("android.app", "Activity");
+    public static final ClassName APP_COMPAT_ACTIVITY = ClassName.get("android.support.v7.app", "AppCompatActivity");
     public static final ClassName VIEW = views.get("View");
 
     private Android() {

@@ -7,10 +7,17 @@ import com.squareup.javapoet.ParameterSpec;
 import com.squareup.javapoet.TypeName;
 import com.squareup.javapoet.TypeSpec;
 
+import java.util.List;
+import java.util.Set;
+import java.util.stream.Collectors;
 import java.util.stream.Stream;
+
+import javax.lang.model.util.Elements;
 
 import lt.markav.legendsoflayouts.annotation.FragmentsType;
 import lt.markav.legendsoflayouts.processor.parser.Layout;
+import lt.markav.legendsoflayouts.processor.parser.tag.FragmentTag;
+import lt.markav.legendsoflayouts.processor.parser.tag.FragmentType;
 import lt.markav.legendsoflayouts.processor.util.Android;
 import lt.markav.legendsoflayouts.processor.util.Logging;
 
@@ -18,6 +25,7 @@ import static com.squareup.javapoet.MethodSpec.constructorBuilder;
 import static com.squareup.javapoet.ParameterSpec.builder;
 import static javax.lang.model.element.Modifier.FINAL;
 import static javax.lang.model.element.Modifier.PUBLIC;
+import static lt.markav.legendsoflayouts.processor.parser.tag.FragmentType.SUPPORT;
 
 public class ClassGenerator implements Logging {
 
@@ -26,13 +34,14 @@ public class ClassGenerator implements Logging {
     private final String appId;
     private final Layout layout;
     private final String className;
+    private final Elements elementUtils;
 
-    public ClassGenerator(LegendsOfLayoutsAnnotation annotation, Layout layout) {
-        this.appId = annotation.getAppId();
+    public ClassGenerator(Elements elementUtils, LegendsOfLayoutsAnnotation annotation, Layout layout) {
         this.fragmentsType = annotation.getFragmentsType();
+        this.appId = annotation.getAppId();
         this.layout = layout;
-
-        className = createClassName(layout.getName());
+        this.className = createClassName(layout.getName());
+        this.elementUtils = elementUtils;
     }
 
     private String createClassName(String name) {
@@ -52,47 +61,50 @@ public class ClassGenerator implements Logging {
     }
 
     private JavaFile createClassFile() throws Exception {
+        TypeSpec.Builder legendClass = TypeSpec.classBuilder(className).addModifiers(PUBLIC, FINAL);
 
-        TypeSpec.Builder classBuilder = TypeSpec
-                .classBuilder(className)
-                .addModifiers(PUBLIC, FINAL);
+        Set<FragmentType> fragmentTypes = layout.getTags().stream()
+                .filter(tag -> tag instanceof FragmentTag)
+                .map(tag -> (FragmentTag) tag)
+                .map(fragmentTag -> fragmentTag.getFragmentType(elementUtils))
+                .collect(Collectors.toSet());
 
-        layout.getTags().forEach(tag -> tag.declareField(classBuilder));
+        layout.streamViews().forEach(tag -> tag.declareField(legendClass));
+        layout.streamFragments().forEach(tag -> tag.declareField(legendClass));
 
-        MethodSpec constructorForActivity = createConstructorForActivity();
-        MethodSpec constructorForView = createConstructorForView();
-        if (!fragmentsType.equals(FragmentsType.NATIVE)) {
-            MethodSpec constructorForSupportFragment = createConstructorForSupportFragment();
-            classBuilder.addMethod(constructorForSupportFragment);
-        }
-        if (!fragmentsType.equals(FragmentsType.SUPPORT)) {
-            MethodSpec constructorForNativeFragment = createConstructorForNativeFragment();
-            classBuilder.addMethod(constructorForNativeFragment);
-        }
+        System.out.println("fragments: " + fragmentTypes);
+        legendClass.addMethod(getConstructorForActivity(fragmentTypes));
 
-        classBuilder.addMethod(constructorForActivity);
-        classBuilder.addMethod(constructorForView);
+//        legendClass.addMethod(getConstructorForView(fragmentsTypes));
 
-        TypeSpec landmarksClass = classBuilder.build();
+//        if (!fragmentsType.equals(FragmentsType.NATIVE)) {
+//            legendClass.addMethod(getConstructorForSupportFragment());
+//        }
+//        if (!fragmentsType.equals(FragmentsType.SUPPORT)) {
+//            legendClass.addMethod(getConstructorForNativeFragment());
+//        }
+
+        TypeSpec landmarksClass = legendClass.build();
         return JavaFile.builder(appId, landmarksClass).build();
     }
 
-    private MethodSpec createConstructorForActivity() {
-        return createConstructor(Android.ACTIVITY, "activity", this::generateInitialization);
+    private MethodSpec getConstructorForActivity(Set<FragmentType> types) {
+        ClassName type = types.contains(SUPPORT) ? Android.APP_COMPAT_ACTIVITY : Android.ACTIVITY;
+        return createConstructor(type, "activity", this::generateInitialization);
     }
 
-    private MethodSpec createConstructorForView() {
+    private MethodSpec getConstructorForView(Set<FragmentType> fragments) {
         return createConstructor(Android.VIEW, "view", this::generateInitialization);
     }
 
-    private MethodSpec createConstructorForSupportFragment() {
+    private MethodSpec getConstructorForSupportFragment() {
         TypeName fragment = ClassName.get("android.support.v4.app", "Fragment");
         return createConstructor(fragment, "fragment", (builder, name) -> {
             builder.addStatement("this($L.getView())", name);
         });
     }
 
-    private MethodSpec createConstructorForNativeFragment() {
+    private MethodSpec getConstructorForNativeFragment() {
         TypeName fragment = ClassName.get("android.app", "Fragment");
         return createConstructor(fragment, "fragment", (builder, name) -> {
             builder.addStatement("this($L.getView())", name);
@@ -107,7 +119,8 @@ public class ClassGenerator implements Logging {
     }
 
     private void generateInitialization(MethodSpec.Builder builder, String name) {
-        layout.getTags().stream().forEach(tag -> tag.generateInitialization(builder, name));
+        layout.streamViews().forEach(tag -> tag.generateInitialization(builder, name));
+        layout.streamFragments().forEach(tag -> tag.generateInitialization(builder, name));
     }
 
     public interface MethodFiller {

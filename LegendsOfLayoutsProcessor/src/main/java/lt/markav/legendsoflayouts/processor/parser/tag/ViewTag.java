@@ -38,12 +38,12 @@ public class ViewTag implements Tag {
                 .replace("@android:id/", "android_");
 
         String camelCase = Stream.of(cleanId.split("_"))
-                .map(this::FirstUpperCase)
+                .map(this::firstUpperCase)
                 .collect(Collectors.joining());
         return camelCase.substring(0, 1).toLowerCase() + camelCase.substring(1);
     }
 
-    private String FirstUpperCase(String str) {
+    private String firstUpperCase(String str) {
         return str.substring(0, 1).toUpperCase() + str.substring(1);
     }
 

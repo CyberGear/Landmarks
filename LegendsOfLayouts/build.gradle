@@ -5,17 +5,6 @@ sourceCompatibility = "1.7"
 targetCompatibility = "1.7"
 
 repositories {
-    // not working
-    maven {
-        name "env1"
-        url "${System.env.ANDROID_HOME}/extras/android/m2repository/"
-    }
-    // not working
-    maven {
-        name "env2"
-        url "${System.getenv('ANDROID_HOME')}/extras/android/m2repository/"
-    }
-    // working
     maven {
         name "had1"
         url "/home/COMMON_DATA/lib/android_sdk/extras/android/m2repository/"

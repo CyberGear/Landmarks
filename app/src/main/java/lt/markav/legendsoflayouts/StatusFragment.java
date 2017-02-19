@@ -15,23 +15,23 @@ public class StatusFragment extends Fragment {
                              @Nullable ViewGroup container,
                              @Nullable Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_status, container, false);
-        final FragmentStatusLegend legend = new FragmentStatusLegend(view);
-
-        legend.firstButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                legend.firstButton.setEnabled(false);
-                legend.secondButton.setEnabled(true);
-            }
-        });
-        legend.secondButton.setEnabled(false);
-        legend.secondButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                legend.secondButton.setEnabled(false);
-                legend.firstButton.setEnabled(true);
-            }
-        });
+//        final FragmentStatusLegend legend = new FragmentStatusLegend(view);
+//
+//        legend.firstButton.setOnClickListener(new View.OnClickListener() {
+//            @Override
+//            public void onClick(View v) {
+//                legend.firstButton.setEnabled(false);
+//                legend.secondButton.setEnabled(true);
+//            }
+//        });
+//        legend.secondButton.setEnabled(false);
+//        legend.secondButton.setOnClickListener(new View.OnClickListener() {
+//            @Override
+//            public void onClick(View v) {
+//                legend.secondButton.setEnabled(false);
+//                legend.firstButton.setEnabled(true);
+//            }
+//        });
 
         return view;
     }
