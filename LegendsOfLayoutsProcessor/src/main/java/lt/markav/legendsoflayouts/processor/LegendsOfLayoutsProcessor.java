@@ -28,11 +28,8 @@ import lt.markav.legendsoflayouts.processor.util.Logging;
 import static javax.tools.Diagnostic.Kind.ERROR;
 import static javax.tools.Diagnostic.Kind.WARNING;
 
-@SupportedAnnotationTypes("lt.markav.landmarks.annotation.LegendsOfLayouts")
-@SupportedSourceVersion(SourceVersion.RELEASE_7)
 public class LegendsOfLayoutsProcessor extends AbstractProcessor implements Logging {
 
-    private Types typeUtils;
     private Elements elementUtils;
     private Filer filer;
     private Messager messager;
@@ -40,7 +37,6 @@ public class LegendsOfLayoutsProcessor extends AbstractProcessor implements Logg
     @Override
     public synchronized void init(ProcessingEnvironment processingEnv) {
         super.init(processingEnv);
-        typeUtils = processingEnv.getTypeUtils();
         elementUtils = processingEnv.getElementUtils();
         filer = processingEnv.getFiler();
         messager = processingEnv.getMessager();
@@ -52,7 +48,17 @@ public class LegendsOfLayoutsProcessor extends AbstractProcessor implements Logg
     }
 
     @Override
+    public SourceVersion getSupportedSourceVersion() { // @SupportedSourceVersion(SourceVersion.RELEASE_7)
+        return SourceVersion.RELEASE_7;
+    }
+
+    @Override
     public boolean process(Set<? extends TypeElement> annotations, RoundEnvironment roundEnv) {
+        header();
+        log(annotations);
+        header();
+
+
         if (roundEnv.processingOver()) return true;
 
         header();

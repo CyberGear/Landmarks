@@ -17,24 +17,24 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        ActivityMainLegend legend = new ActivityMainLegend(this);
-
-        setSupportActionBar(legend.toolbar);
-        legend.viewPager.setAdapter(new FragmentPagerAdapter(getSupportFragmentManager()) {
-            @Override
-            public Fragment getItem(int position) {
-                switch (position) {
-                    case 0: return new FormFragment();
-                    case 1: return new ListFragment();
-                }
-                return null;
-            }
-
-            @Override
-            public int getCount() {
-                return 2;
-            }
-        });
+//        ActivityMainLegend legend = new ActivityMainLegend(this);
+//
+//        setSupportActionBar(legend.toolbar);
+//        legend.viewPager.setAdapter(new FragmentPagerAdapter(getSupportFragmentManager()) {
+//            @Override
+//            public Fragment getItem(int position) {
+//                switch (position) {
+//                    case 0: return new FormFragment();
+//                    case 1: return new ListFragment();
+//                }
+//                return null;
+//            }
+//
+//            @Override
+//            public int getCount() {
+//                return 2;
+//            }
+//        });
     }
 
 }
