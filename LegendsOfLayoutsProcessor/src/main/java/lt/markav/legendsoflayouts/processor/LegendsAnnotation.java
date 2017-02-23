@@ -11,13 +11,13 @@ import javax.lang.model.type.MirroredTypeException;
 import lt.markav.legendsoflayouts.annotation.FragmentsType;
 import lt.markav.legendsoflayouts.annotation.LegendsOfLayouts;
 
-public class LegendsOfLayoutsAnnotation {
+public class LegendsAnnotation {
 
     private final String appId;
     @FragmentsType
     private final String fragmentsType;
 
-    public LegendsOfLayoutsAnnotation(RoundEnvironment env) {
+    public LegendsAnnotation(RoundEnvironment env) {
         Optional<? extends Element> element = env.getElementsAnnotatedWith(LegendsOfLayouts.class)
                 .stream().findFirst();
 

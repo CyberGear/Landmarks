@@ -7,7 +7,6 @@ import com.squareup.javapoet.ParameterSpec;
 import com.squareup.javapoet.TypeName;
 import com.squareup.javapoet.TypeSpec;
 
-import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
@@ -36,7 +35,7 @@ public class ClassGenerator implements Logging {
     private final String className;
     private final Elements elementUtils;
 
-    public ClassGenerator(Elements elementUtils, LegendsOfLayoutsAnnotation annotation, Layout layout) {
+    public ClassGenerator(Elements elementUtils, LegendsAnnotation annotation, Layout layout) {
         this.fragmentsType = annotation.getFragmentsType();
         this.appId = annotation.getAppId();
         this.layout = layout;

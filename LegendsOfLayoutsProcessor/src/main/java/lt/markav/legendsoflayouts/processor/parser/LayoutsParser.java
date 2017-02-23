@@ -22,9 +22,9 @@ import javax.tools.JavaFileObject;
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 
-import lt.markav.legendsoflayouts.processor.util.Logging;
 import lt.markav.legendsoflayouts.processor.parser.tag.IncludeTag;
 import lt.markav.legendsoflayouts.processor.parser.tag.Tag;
+import lt.markav.legendsoflayouts.processor.util.Logging;
 
 public class LayoutsParser implements Logging {
 
@@ -65,8 +65,8 @@ public class LayoutsParser implements Logging {
         layouts.values().stream().forEach(layout -> {
             List<IncludeTag> includes = filterIncludes(layout);
 
-            Set<Tag> inheritedTags = includes.stream().flatMap(include ->
-                    layouts.get(include.getLayoutName()).getTags().stream())
+            Set<Tag> inheritedTags = includes.stream()
+                    .flatMap(include -> layouts.get(include.getLayoutName()).getTags().stream())
                     .collect(Collectors.toSet());
 
             layout.getTags().removeAll(includes);
@@ -82,8 +82,7 @@ public class LayoutsParser implements Logging {
     }
 
     private Map<String, Layout> findLayouts() {
-        List<File> layoutFolders = findLayoutFolders(root);
-        return resolveLayouts(layoutFolders);
+        return resolveLayouts(findLayoutFolders(root));
     }
 
     private List<File> findLayoutFolders(File rootFile) {

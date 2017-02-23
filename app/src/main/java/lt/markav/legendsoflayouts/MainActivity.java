@@ -12,13 +12,17 @@ import lt.markav.legendsoflayouts.annotation.LegendsOfLayouts;
 @LegendsOfLayouts(R.class)
 public class MainActivity extends AppCompatActivity {
 
+    private String field0;
+    String field1;
+    public String field2;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
 //        ActivityMainLegend legend = new ActivityMainLegend(this);
-//
+
 //        setSupportActionBar(legend.toolbar);
 //        legend.viewPager.setAdapter(new FragmentPagerAdapter(getSupportFragmentManager()) {
 //            @Override
